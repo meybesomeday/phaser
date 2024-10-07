@@ -8,6 +8,7 @@ var Class = require('../../utils/Class');
 var FileTypesManager = require('../FileTypesManager');
 var GetFastValue = require('../../utils/object/GetFastValue');
 var ImageFile = require('./ImageFile.js');
+var CompressedTextureFile = require('./CompressedTextureFile.js')
 var IsPlainObject = require('../../utils/object/IsPlainObject');
 var JSONFile = require('./JSONFile.js');
 var MultiFile = require('../MultiFile.js');
@@ -115,8 +116,27 @@ var MultiAtlasFile = new Class({
                     var textureURL = textures[i].image;
 
                     var key = 'MA' + this.multiKeyIndex + '_' + textureURL;
+                    
+                    var format = textures[i].format;
+                    
+                    if (format != "RGBA8888")
+                    {
+                        var image = new ImageFile(loader, key, textureURL, textureXhrSettings);
+                    }
+                    else
+                    {
+                    var entry = {
+                        format: format.toUpperCase(),
+                        type: null,
+                        textureURL: textures[i].image,
+                        atlasURL: undefined,
+                        multiAtlasURL: undefined,
+                        multiPath: undefined,
+                        multiBaseURL: undefined
+                    };
+                        var image = new CompressedTextureFile(loader, entry, textureURL, textureXhrSettings)
+                    }
 
-                    var image = new ImageFile(loader, key, textureURL, textureXhrSettings);
 
                     this.addToMultiFile(image);
 
